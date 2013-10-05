@@ -1,8 +1,13 @@
 var express = require('express'),
   request = require('request'),
-  alchemy = require('../alchemyapi');
+  alchemy = require('../alchemyapi')
+  _ = require('underscore');
 
 var app = express();
+
+app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
+app.use(express.cookieParser());
+app.use(express.bodyParser());
 
 app.set('views', __dirname + '/views');
 app.set('view engine', 'jade');
@@ -12,18 +17,32 @@ app.get('/', function(req, res) {
 });
 
 app.post('/', function(req, res) {
-  var url = req.param('url');
-  request(url, function(error, response, body) {
-    if (!error && response.statusCode == 200) {
-      alchemy.relations('url', url, {}, function(error, response) {
-        console.log(error, response);
-        var data = {
-          relations: response,
-          text: body
-        };
-        res.send(data);
-      });
-    }
+  var url1 = req.param('url1'),
+      url2 = req.param('url2');
+  
+  console.log(url1, url2);
+
+  alchemy.concepts('url', url1, {}, function(error, response1) {
+    alchemy.concepts('url', url2, {}, function(error, response2) {
+      var keys1 = _.pluck(response1['concepts'], 'text'),
+          keys2 = _.pluck(response2['concepts'], 'text'),
+          shared = _.intersection(keys1, keys2),
+          totalLength = keys1.length + keys2.length - shared.length,
+          percent = shared.length / totalLength;
+
+      console.log(keys1);
+      console.log(keys2);
+
+      console.log(shared, percent);
+
+      var data = {
+        url1: response1,
+        url2: response2,
+        matchPercent: percent
+      };
+
+      res.send(data);
+    });
   });
 });
 
