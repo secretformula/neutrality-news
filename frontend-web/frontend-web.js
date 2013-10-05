@@ -2,12 +2,13 @@ var config = require('../config/config');
 var connect = require('connect');
 var express = require('express');
 var Gearman = require("node-gearman");
+var mongode = require('mongode');
 
 // Setup Connection to gearman
-/*
 var gearmanServer = new Gearman(config.gearman.host, config.gearman.port);
 gearmanServer.connect();
-*/
+
+
 
 var PATH_TO_PUBLIC = __dirname + '/public';
 

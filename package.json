@@ -9,8 +9,7 @@
     "jade": "0.30.x",
     "node-gearman": "0.2.x",
     "nopt": "2.1.x",
-    "mongoose": "3.6.x",
-    "mongoose-types": "1.x",
+    "mongode": "0.1.x",
     "request": "2.27.x"
   }
 }
