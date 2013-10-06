@@ -38,8 +38,8 @@ app.post('/', function(req, res) {
   var url = req.body.url;
   console.log(url);
 
-  gearmanServer.submitJob('create-article', JSON.stringify({url: url})).on('data', function(data) {
-    console.log("created article", data.toString('utf-8'));
+  gearmanServer.submitJob('create-article', JSON.stringify({url: url})).on('end', function() {
+    console.log("created article");
     gearmanServer.submitJob('parse-url-sentence', JSON.stringify({url: url})).on('data', function(data) {
       data = data.toString('utf-8');
       console.log("first job done", JSON.stringify(data));
