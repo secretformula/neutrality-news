@@ -137,7 +137,8 @@ gearmanServer.registerWorker('compile-article', function(payload, worker) {
     url: url,
     compiled_text: text,
     title: payload.title,
-    percent: percentObjective
+    percent: percentObjective,
+    created_at: new Date()
   }, function() {
     console.log("findAndModify", arguments);
   });

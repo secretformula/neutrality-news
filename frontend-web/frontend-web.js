@@ -30,7 +30,7 @@ app.set('view engine', 'jade');
 
 // Implimentation of the router is below
 app.get('/', function(req, res) {
-  compiledArticles.find().toArray(function(err, items) {
+  compiledArticles.find().sort({ created_at: -1 }).toArray(function(err, items) {
     var new_items = _.map(items, function(item) {
       if (!item.compiled_text) return item;
       item.compiled_text = item.compiled_text.replace(/\n/gm, "<br/>");
