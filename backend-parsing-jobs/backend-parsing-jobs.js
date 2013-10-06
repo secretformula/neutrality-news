@@ -41,6 +41,7 @@ gearmanServer.registerWorker('create-article', function(payload, worker) {
     collection.insert(article, {safe:true}, function (err, objects){
       if (err) console.warn(err.message);
 
+      console.log("inserted", objects);
       worker.end();
     });
   });
