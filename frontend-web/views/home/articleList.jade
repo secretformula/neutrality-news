@@ -1,5 +1,5 @@
 form(method='post', action='/')
-  input(type='text', name='url', placeholder='Parse a url')
+  input(type='text', name='url', placeholder='Parse a url', autofocus='autofocus')
   input(type='submit', value='Submit')
 
 ul#article-list
@@ -8,4 +8,5 @@ ul#article-list
       h2
         a(href=article.url) #{article.title}
       .list-item-description #{article.description}
-      .list-item-description #{article.compiled_text}
+      .list-item-description
+        != article.compiled_text

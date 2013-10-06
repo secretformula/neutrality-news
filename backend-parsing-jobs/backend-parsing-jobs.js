@@ -42,7 +42,7 @@ gearmanServer.registerWorker('create-article', function(payload, worker) {
       if (err) console.warn(err.message);
 
       console.log("inserted", objects);
-      worker.end();
+      worker.end(JSON.stringify(objects[0]));
     });
   });
 });
@@ -59,6 +59,7 @@ gearmanServer.registerWorker('parse-url-sentence', function(payload, worker) {
   alchemy.text_clean('url', payload.url, {}, function(error, response) {
     var data = {
       url: payload.url,
+      title: payload.title,
       data: response.text.split("\n")
     }
     worker.end(JSON.stringify(data));
@@ -103,7 +104,6 @@ gearmanServer.registerWorker('compile-article', function(payload, worker) {
     worker.error();
     return;
   }
-  console.log(payload.toString("utf-8"));
   payload = JSON.parse(payload.toString("utf-8"));
   if (typeof payload == "string") {
     payload = JSON.parse(payload);
@@ -112,7 +112,7 @@ gearmanServer.registerWorker('compile-article', function(payload, worker) {
   var url = payload["url"];
   var data = payload["data"];
 
-  console.log(payload, url, data, payload.data);
+  console.log(payload);
 
   var classifications = [];
 
@@ -122,6 +122,7 @@ gearmanServer.registerWorker('compile-article', function(payload, worker) {
     var classified = classifier.classify(line);
 
     if (classified == 'objective') {
+      // classifications.push(classified + " " + line);
       classifications.push(line);
     }
   }
@@ -130,10 +131,10 @@ gearmanServer.registerWorker('compile-article', function(payload, worker) {
 
   var collection = mongoServer.collection('compiled_articles');
 
-  collection.findAndModify({
-    query: { url: url },
-    update: { compiled_text: text },
-    upsert: true
+  collection.insert({
+    url: url,
+    compiled_text: text,
+    title: payload.title
   }, function() {
     console.log("findAndModify", arguments);
   });

@@ -3,6 +3,7 @@ var connect = require('connect');
 var express = require('express');
 var Gearman = require("node-gearman");
 var mongode = require('mongode');
+var _ = require('underscore');
 
 // Setup Connection to gearman
 var gearmanServer = new Gearman(config.gearman.host, config.gearman.port);
@@ -30,6 +31,11 @@ app.set('view engine', 'jade');
 // Implimentation of the router is below
 app.get('/', function(req, res) {
   compiledArticles.find().toArray(function(err, items) {
+    var new_items = _.map(items, function(item) {
+      if (!item.compiled_text) return item;
+      item.compiled_text = item.compiled_text.replace(/\n/gm, "<br/>");
+      return item;
+     });
     res.render('index.jade', { articles: items });
   });
 });
@@ -38,16 +44,18 @@ app.post('/', function(req, res) {
   var url = req.body.url;
   console.log(url);
 
-  gearmanServer.submitJob('create-article', JSON.stringify({url: url})).on('end', function() {
-    console.log("created article");
-    gearmanServer.submitJob('parse-url-sentence', JSON.stringify({url: url})).on('data', function(data) {
+  gearmanServer.submitJob('create-article', JSON.stringify({url: url})).on('data', function(data) {
+    console.log("created article", data.toString('utf-8'));
+    data = JSON.parse(data.toString('utf-8'));
+    gearmanServer.submitJob('parse-url-sentence', JSON.stringify({url: url, title: data.title})).on('data', function(data) {
       data = data.toString('utf-8');
       console.log("first job done", data);
       gearmanServer.submitJob('compile-article', data);
     });
   });
 
-  res.send(url);
+  //res.send(url);
+  res.redirect('/');
 });
 
 app.listen(3000);
