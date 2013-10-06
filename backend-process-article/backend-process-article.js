@@ -9,16 +9,16 @@ var mongode = require('mongode');
 var gearmanServer = new Gearman(config.gearman.host, config.gearman.port);
 gearmanServer.connect();
 
-var mongoServer = mongode.connect(config.mongo.host);
+var dbServer = mongode.connect(config.mongo.host);
 var sourceArticles = dbServer.collection('source_articles');
 
-sourceArticles.find({sentences: {$exists: false} }.toArray(function(err, items) {
+sourceArticles.find({sentences: {$exists: false}}).toArray(function(err, items) {
   if(err) {
     // TODO: ANything
   }
   _.each(items, function(elem) {
-    gearman.submitJob('parse-url-sentence', JSON.stringify({url: elem.url})).on('data', function(data) {
-      gearman.submitJob('compile-article', JSON.stringify(data));
+    gearmanServer.submitJob('parse-url-sentence', JSON.stringify({url: elem.url})).on('data', function(data) {
+      gearmanServer.submitJob('compile-article', JSON.stringify(data));
     });
   });
 });
