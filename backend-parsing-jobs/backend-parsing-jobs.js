@@ -33,7 +33,7 @@ gearmanServer.registerWorker('create-article', function(payload, worker) {
     }
     
     var article = {
-      title: response,
+      title: response.title,
       url: payload.url,
       created_at: new Date()
     }
