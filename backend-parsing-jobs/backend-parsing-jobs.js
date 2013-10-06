@@ -53,3 +53,7 @@ gearmanServer.registerWorker('store-article-concepts', function(payload, worker)
   });
 });
 
+gearmanServer.registerWorker('compile-article', function(payload, worker) {
+  
+});
+
