@@ -1,7 +1,13 @@
-var express = require('express'),
-  request = require('request'),
-  alchemy = require('../alchemyapi')
-  _ = require('underscore');
+var express = require('express');
+var request = require('request');
+var alchemy = require('../alchemyapi');
+var _ = require('underscore');
+var config = require('../config/config');
+var Gearman = require("node-gearman");
+
+// Setup Connection to gearman
+var gearmanServer = new Gearman(config.gearman.host, config.gearman.port);
+gearmanServer.connect();
 
 var app = express();
 
