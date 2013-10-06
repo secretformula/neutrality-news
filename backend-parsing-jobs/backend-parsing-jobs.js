@@ -31,8 +31,7 @@ gearmanServer.registerWorker('parse-url-sentence', function(payload, worker) {
       url: payload.url,
       data: response.text.split("\n")
     }
-    worker.end(data);
-    console.log(data);
+    worker.end(JSON.stringify(data));
   });
 });
 
@@ -105,4 +104,3 @@ gearmanServer.registerWorker('compile-article', function(payload, worker) {
 
   worker.end();
 });
-
