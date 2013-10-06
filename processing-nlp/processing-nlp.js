@@ -48,4 +48,56 @@ for (var i=0; i<dates.length; i++) {
   }
 }
 
-console.log(sources);
+// console.log(sources);
+
+var keys = []
+var vals = [];
+
+for (var i=0; i<sources.length; i++) {
+  var source = sources[i];
+  var annotation = annotations[i];
+
+  // console.log(annotation);
+
+  var lines = annotation.split("\n");
+
+  for (var j=0; j<lines.length; j++) {
+    var line = lines[j];
+
+    if (line[0] == "#") continue;
+
+    if (line.indexOf("objectiv") == -1 && line.indexOf("subjectiv") == -1) continue;
+
+    var sections = line.split("\t");
+
+    var range = sections[1].split(",");
+    
+    var chars = source.slice(range[0], range[1]);
+
+    if (chars.length == 0) continue;
+
+    console.log(chars);
+
+    keys.push(chars);
+    
+    if (sections[3].indexOf("GATE_direct-subjective")) {
+      if (!line.match(/intensity=\"(low|neutral)\"/) && !line.match(/insubstantial/)) {
+        vals.push("subjective");
+      } else {
+        vals.push("objective");
+      }
+    } else if (sections[3].indexOf("GATE_expressive-subjectivity")) {
+      if (!line.match(/intensity=\"(low)\"/)) {
+        vals.push("subjective");
+      } else {
+        vals.push("objective");
+      }
+    } else {
+      vals.push("objective");
+    }
+  }
+}
+
+console.log(keys.length, vals.length);
+
+classify(keys, vals);
