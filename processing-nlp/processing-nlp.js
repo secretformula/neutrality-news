@@ -1,6 +1,21 @@
+var natural = require('natural');
+var classifier = new natural.BayesClassifier();
+var _ = require('underscore')
+
 var fs = require('fs');
 var path = require('path');
-var _ = require('underscore');
+
+function classify(words, values) {
+  _.each(words, function(elem, index) {
+    classifier.addDocument(words[index], values[index]);
+  });
+  classifier.train();
+  classifier.save('objectivness-classifier.json', function(err) {
+    if(err) {
+      return;
+    }
+  });
+}
 
 var root = path.join(__dirname, 'database.mpqa.2.0');
 
@@ -34,3 +49,4 @@ for (var i=0; i<dates.length; i++) {
 }
 
 console.log(sources);
+>>>>>>> master
