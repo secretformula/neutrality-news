@@ -5,6 +5,7 @@ form(method='post', action='/')
 ul#article-list
   for article in articles
     li(class='list-item')
-      h2 #{article.title}
+      h2
+        a(href=article.url) #{article.title}
       .list-item-description #{article.description}
       .list-item-description #{article.compiled_text}
