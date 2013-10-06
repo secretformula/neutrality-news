@@ -10,6 +10,7 @@
     "node-gearman": "0.2.x",
     "nopt": "2.1.x",
     "mongode": "0.1.x",
-    "request": "2.27.x"
+    "request": "2.27.x",
+    "underscore": "~1.5.2"
   }
 }
