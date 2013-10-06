@@ -11,6 +11,8 @@
     "nopt": "2.1.x",
     "mongode": "0.1.x",
     "request": "2.27.x",
-    "feedparser": "0.16.x"
+    "underscore": "~1.5.2",
+    "natural": "0.1.x",
+	"feedparser": "0.16.x"
   }
 }
