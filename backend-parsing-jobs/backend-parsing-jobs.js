@@ -105,6 +105,9 @@ gearmanServer.registerWorker('compile-article', function(payload, worker) {
   }
   console.log(payload.toString("utf-8"));
   payload = JSON.parse(payload.toString("utf-8"));
+  if (typeof payload == "string") {
+    payload = JSON.parse(payload);
+  }
 
   var url = payload["url"];
   var data = payload["data"];
