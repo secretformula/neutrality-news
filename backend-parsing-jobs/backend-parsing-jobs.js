@@ -25,7 +25,7 @@ gearmanServer.registerWorker('create-article', function(payload, worker) {
   }
   payload = JSON.parse(payload.toString("utf-8"));
 
-  alchemy.title('url', payload.url, {}, function(error, response) {
+  alchemy.text_title('url', payload.url, {}, function(error, response) {
     if (error) {
       worker.error();
       return;
