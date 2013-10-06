@@ -38,10 +38,12 @@ app.post('/', function(req, res) {
   var url = req.body.url;
   console.log(url);
 
-  gearmanServer.submitJob('parse-url-sentence', JSON.stringify({url: url})).on('data', function(data) {
-    data = data.toString('utf-8');
-    console.log("first job done", JSON.stringify(data));
-    gearmanServer.submitJob('compile-article', JSON.stringify(data));
+  gearmanServer.submitJob('create-article', JSON.stringify({url: url})).on('data', function(data) {
+    gearmanServer.submitJob('parse-url-sentence', JSON.stringify({url: url})).on('data', function(data) {
+      data = data.toString('utf-8');
+      console.log("first job done", JSON.stringify(data));
+      gearmanServer.submitJob('compile-article', JSON.stringify(data));
+    });
   });
 
   res.send(url);

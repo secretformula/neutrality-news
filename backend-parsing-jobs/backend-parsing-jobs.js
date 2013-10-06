@@ -17,6 +17,34 @@ var mongoServer = mongode.connect(config.mongo.host);
 var classifierDump = fs.readFileSync(path.join(__dirname, '..', 'processing-nlp', 'objectiveness-classifier.json'));
 var classifier = natural.BayesClassifier.restore(JSON.parse(classifierDump));
 
+
+gearmanServer.registerWorker('create-article', function(payload, worker) {
+  if (!payload) {
+    worker.error();
+    return;
+  }
+  payload = JSON.parse(payload.toString("utf-8"));
+
+  alchemy.title('url', url, {}, function(error, response) {
+    if (error) {
+      worker.error();
+      return;
+    }
+    
+    var article = {
+      title: response,
+      url: url,
+      created_at: new Date()
+    }
+
+    collection.insert(article, {safe:true}, function (err, objects){
+      if (err) console.warn(err.message);
+
+      worker.end();
+    });
+  });
+});
+
 // input: url
 // return: hash with url, data (array of strings)
 gearmanServer.registerWorker('parse-url-sentence', function(payload, worker) {
