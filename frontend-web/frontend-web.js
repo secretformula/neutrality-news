@@ -8,7 +8,9 @@ var mongode = require('mongode');
 var gearmanServer = new Gearman(config.gearman.host, config.gearman.port);
 gearmanServer.connect();
 
-
+// Connect to mongodb
+var dbServer = mongode.connect(config.mongo.host);
+var compiledArticles = dbServer.collection('compiled_articles');
 
 var PATH_TO_PUBLIC = __dirname + '/public';
 
@@ -27,7 +29,9 @@ app.set('view engine', 'jade');
 
 // Implimentation of the router is below
 app.get('/', function(req, res) {
-	res.render('index.jade');
+  compiledArticles.find().toArray(function(err, items) {
+    res.render('index.jade', {articles: items});
+  });
 });
 
 app.listen(3000);
