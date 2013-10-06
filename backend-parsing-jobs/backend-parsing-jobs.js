@@ -58,7 +58,11 @@ gearmanServer.registerWorker('store-article-concepts', function(payload, worker)
   });
 });
 
-// array of strings -> array of strings
+// expects input:
+// {
+//   url: string
+//   data: [array of strings]
+// }
 gearmanServer.registerWorker('compile-article', function(payload, worker) {
   if (!payload) {
     worker.error();
