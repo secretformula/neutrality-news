@@ -1,3 +1,21 @@
 body {
-  font-family: sans-serif;
+  font-family: Vollkorn, sans-serif;
+  max-width: 80%;
+  margin: 1em auto;
 }
+
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+input {
+  font-size: 16px;
+  padding: 10px;
+}
+
+.percent {
+  margin-bottom: 1em;
+  font-weight: bold;
+}
+

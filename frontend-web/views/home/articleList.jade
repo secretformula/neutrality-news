@@ -7,6 +7,8 @@ ul#article-list
     li(class='list-item')
       h2
         a(href=article.url) #{article.title}
-      .list-item-description #{article.description}
+      .percent
+        = article.percent
+        % removed
       .list-item-description
         != article.compiled_text

@@ -34,6 +34,9 @@ app.get('/', function(req, res) {
     var new_items = _.map(items, function(item) {
       if (!item.compiled_text) return item;
       item.compiled_text = item.compiled_text.replace(/\n/gm, "<br/>");
+      if (item.percent) {
+        item.percent = ((1 - item.percent) * 100).toFixed(2);
+      }
       return item;
      });
     res.render('index.jade', { articles: items });

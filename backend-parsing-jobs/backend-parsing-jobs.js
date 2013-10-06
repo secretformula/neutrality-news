@@ -127,6 +127,8 @@ gearmanServer.registerWorker('compile-article', function(payload, worker) {
     }
   }
 
+  var percentObjective = classifications.length / data.length;
+
   var text = classifications.join("\n\n");
 
   var collection = mongoServer.collection('compiled_articles');
@@ -134,7 +136,8 @@ gearmanServer.registerWorker('compile-article', function(payload, worker) {
   collection.insert({
     url: url,
     compiled_text: text,
-    title: payload.title
+    title: payload.title,
+    percent: percentObjective
   }, function() {
     console.log("findAndModify", arguments);
   });
