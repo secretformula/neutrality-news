@@ -30,7 +30,7 @@ app.set('view engine', 'jade');
 // Implimentation of the router is below
 app.get('/', function(req, res) {
   compiledArticles.find().toArray(function(err, items) {
-    res.render('index.jade', {articles: items});
+    res.render('index.jade', { articles: items });
   });
 });
 
