@@ -78,6 +78,8 @@ gearmanServer.registerWorker('compile-article', function(payload, worker) {
   var url = payload.url;
   var data = payload.data;
 
+  console.log(payload);
+
   var classifications = [];
 
   for (var i=0; i<data.length; i++) {
