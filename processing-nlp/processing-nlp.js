@@ -49,4 +49,3 @@ for (var i=0; i<dates.length; i++) {
 }
 
 console.log(sources);
->>>>>>> master
