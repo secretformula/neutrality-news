@@ -73,6 +73,7 @@ gearmanServer.registerWorker('compile-article', function(payload, worker) {
     worker.error();
     return;
   }
+  console.log(payload.toString("utf-8"));
   payload = JSON.parse(payload.toString("utf-8"));
 
   var url = payload.url;
