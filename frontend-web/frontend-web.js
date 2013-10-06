@@ -34,4 +34,16 @@ app.get('/', function(req, res) {
   });
 });
 
+app.post('/', function(req, res) {
+  var url = req.body.url;
+  console.log(url);
+
+  gearmanServer.submitJob('parse-url-sentence', JSON.stringify({url: url})).on('data', function(data) {
+    console.log("first job done", data);
+    gearmanServer.submitJob('compile-article', JSON.stringify(data));
+  });
+
+  res.send(url);
+});
+
 app.listen(3000);
