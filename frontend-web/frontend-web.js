@@ -32,8 +32,21 @@ app.set('view engine', 'jade');
 app.get('/', function(req, res) {
   compiledArticles.find().sort({ created_at: -1 }).toArray(function(err, items) {
     var new_items = _.map(items, function(item) {
-      if (!item.compiled_text) return item;
-      item.compiled_text = item.compiled_text.replace(/\n/gm, "<br/>");
+      if (!item.sentences) return item;
+      
+      var final_sentences = _.map(item.sentences, function(sentence) {
+        var result = "";
+        if (sentence[0] == "subjective") {
+          result += '<span class="subjective">';
+        }
+        result += sentence[1];
+        if (sentence[0] == "subjective") {
+          result += '</span>';
+        }
+        return result;
+      });
+
+      item.final_text = final_sentences.join("<br/><br/>\n");
       if (item.percent) {
         item.percent = ((1 - item.percent) * 100).toFixed(2);
       }
@@ -57,7 +70,6 @@ app.post('/', function(req, res) {
     });
   });
 
-  //res.send(url);
   res.redirect('/');
 });
 

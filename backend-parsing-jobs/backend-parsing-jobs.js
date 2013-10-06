@@ -121,21 +121,21 @@ gearmanServer.registerWorker('compile-article', function(payload, worker) {
 
     var classified = classifier.classify(line);
 
-    if (classified == 'objective') {
-      // classifications.push(classified + " " + line);
-      classifications.push(line);
-    }
+    classifications.push([classified, line]);
   }
 
   var percentObjective = classifications.length / data.length;
 
-  var text = classifications.join("\n\n");
+  var text = _.map(classifications, function(classification) {
+    return classification[1];
+  }).join("\n\n");
 
   var collection = mongoServer.collection('compiled_articles');
 
   collection.insert({
     url: url,
     compiled_text: text,
+    sentences: classifications,
     title: payload.title,
     percent: percentObjective,
     created_at: new Date()
