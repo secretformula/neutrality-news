@@ -4,13 +4,18 @@ var Gearman = require("node-gearman");
 var _ = require('underscore');
 var request = require('request');
 var mongode = require('mongode');
+var natural = require('natural');
+var fs = require('fs');
+var path = require('path');
 
 // Setup Connection to gearman
 var gearmanServer = new Gearman(config.gearman.host, config.gearman.port);
 gearmanServer.connect();
 
-// var mongoServer = mongode.connect(config.mongo.host);
-// console.log(mongoServer);
+var mongoServer = mongode.connect(config.mongo.host);
+
+var classifierDump = fs.readFileSync(path.join(__dirname, '..', 'processing-nlp', 'objectiveness-classifier.json'));
+var classifier = natural.BayesClassifier.restore(JSON.parse(classifierDump));
 
 gearmanServer.registerWorker('parse-url-sentence', function(payload, worker) {
   if (!payload) {
@@ -52,6 +57,42 @@ gearmanServer.registerWorker('store-article-concepts', function(payload, worker)
   });
 });
 
+// expects input:
+// {
+//   url: string
+//   data: [array of strings]
+// }
 gearmanServer.registerWorker('compile-article', function(payload, worker) {
-  
+  if (!payload) {
+    worker.error();
+    return;
+  }
+  payload = JSON.parse(payload.toString("utf-8"));
+
+  var url = payload.url;
+  var data = payload.data;
+
+  var classifications = [];
+
+  for (var i=0; i<data.length; i++) {
+    var line = data[i];
+
+    var classified = classifier.classify(line);
+
+    if (classified == 'objective') {
+      classifications.push(line);
+    }
+  }
+
+  var text = classifications.join("\n\n");
+
+  var collection = mongoServer.collection('compiled_articles');
+
+  collection.findAndModify({
+    query: { url: url },
+    update: { compiled_text: text },
+    upsert: true
+  }, function() {
+    console.log("findAndModify", arguments);
+  });
 });
