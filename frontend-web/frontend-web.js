@@ -39,7 +39,8 @@ app.post('/', function(req, res) {
   console.log(url);
 
   gearmanServer.submitJob('parse-url-sentence', JSON.stringify({url: url})).on('data', function(data) {
-    console.log("first job done", JSON.stringify(data.toString('utf-8')));
+    data = data.toString('utf-8');
+    console.log("first job done", JSON.stringify(data));
     gearmanServer.submitJob('compile-article', JSON.stringify(data));
   });
 
