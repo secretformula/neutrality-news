@@ -20,8 +20,7 @@ gearmanServer.registerWorker('parse-url-sentence', function(payload, worker) {
   payload = JSON.parse(payload.toString("utf-8"));
 
   alchemy.text_clean('url', payload.url, {}, function(error, response) {
-    worker.end(response.text.split("\n"));
-    console.log(response.text.split("\n"));
+    worker.end(JSON.stringify(response.text.split("\n")));
   });
 });
 
@@ -56,4 +55,3 @@ gearmanServer.registerWorker('store-article-concepts', function(payload, worker)
 gearmanServer.registerWorker('compile-article', function(payload, worker) {
   
 });
-
